@@ -5,7 +5,7 @@ import (
 	"io"
 )
 
-const collectdIntGaugeTemplate = "PUTVAL %s/docker_stats-%s/gauge-%s %d:%d\n"
+const collectdIntGaugeTemplate = "PUTVAL %s/docker_stats-%s.%s/gauge-%s %d:%d\n"
 
 // CollectdWriter is responsible for writing data
 // to wrapped writer in collectd exec plugin format
@@ -65,7 +65,7 @@ func (w CollectdWriter) writeInts(s Stats) error {
 	t := s.Stats.Read.Unix()
 
 	for k, v := range metrics {
-		err := w.writeInt(s.App, k, t, v)
+		err := w.writeInt(s, k, t, v)
 		if err != nil {
 			return err
 		}
@@ -74,8 +74,8 @@ func (w CollectdWriter) writeInts(s Stats) error {
 	return nil
 }
 
-func (w CollectdWriter) writeInt(a, k string, t, v int64) error {
-	msg := fmt.Sprintf(collectdIntGaugeTemplate, w.host, a, k, t, v)
+func (w CollectdWriter) writeInt(s Stats, k string, t, v int64) error {
+	msg := fmt.Sprintf(collectdIntGaugeTemplate, w.host, s.App, s.Task, k, t, v)
 	_, err := w.writer.Write([]byte(msg))
 	return err
 }

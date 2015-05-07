@@ -62,7 +62,7 @@
           "targets": [
             {
               "hide": false,
-              "target": "aliasByNode(scaleToSeconds(derivative(collectd.*.docker_stats.$app.gauge.cpu.total), 1), 3, 1)"
+              "target": "aliasByNode(scaleToSeconds(derivative(collectd.*.docker_stats.$app.$task.gauge.cpu.total), 1), 3, 4, 1)"
             }
           ],
           "timeFrom": null,
@@ -133,11 +133,11 @@
           "targets": [
             {
               "hide": false,
-              "target": "alias(averageSeries(collectd.*.docker_stats.$app.gauge.memory.limit), 'limit')"
+              "target": "alias(averageSeries(collectd.*.docker_stats.$app.$task.gauge.memory.limit), 'limit')"
             },
             {
               "hide": false,
-              "target": "aliasByNode(collectd.*.docker_stats.$app.gauge.memory.usage, 3, 1)"
+              "target": "aliasByNode(collectd.*.docker_stats.$app.$task.gauge.memory.usage, 3, 4, 1)"
             }
           ],
           "timeFrom": null,
@@ -211,10 +211,10 @@
           "steppedLine": false,
           "targets": [
             {
-              "target": "aliasByNode(scaleToSeconds(derivative(collectd.*.docker_stats.$app.gauge.net.tx_bytes), 1), 3, 1, 6)"
+              "target": "aliasByNode(scaleToSeconds(derivative(collectd.*.docker_stats.$app.$task.gauge.net.tx_bytes), 1), 3, 4, 1, 7)"
             },
             {
-              "target": "aliasByNode(scaleToSeconds(derivative(collectd.*.docker_stats.$app.gauge.net.rx_bytes), 1), 3, 1, 6)"
+              "target": "aliasByNode(scaleToSeconds(derivative(collectd.*.docker_stats.$app.$task.gauge.net.rx_bytes), 1), 3, 4, 1, 7)"
             }
           ],
           "timeFrom": null,
@@ -280,10 +280,10 @@
           "steppedLine": false,
           "targets": [
             {
-              "target": "aliasByNode(scaleToSeconds(derivative(collectd.*.docker_stats.$app.gauge.net.tx_packets), 1), 3, 1, 6)"
+              "target": "aliasByNode(scaleToSeconds(derivative(collectd.*.docker_stats.$app.$task.gauge.net.tx_packets), 1), 3, 4, 1, 7)"
             },
             {
-              "target": "aliasByNode(scaleToSeconds(derivative(collectd.*.docker_stats.$app.gauge.net.rx_packets), 1), 3, 1, 6)"
+              "target": "aliasByNode(scaleToSeconds(derivative(collectd.*.docker_stats.$app.$task.gauge.net.rx_packets), 1), 3, 4, 1, 7)"
             }
           ],
           "timeFrom": null,
@@ -339,7 +339,7 @@
     }
   ],
   "time": {
-    "from": "now-15m",
+    "from": "now-5m",
     "to": "now"
   },
   "templating": {
@@ -347,16 +347,24 @@
       {
         "allFormat": "glob",
         "current": {
-          "text": "zookeeper",
-          "value": "zookeeper"
+          "text": "hey",
+          "value": "hey"
         },
         "datasource": null,
         "includeAll": false,
         "name": "app",
         "options": [
           {
+            "text": "hey",
+            "value": "hey"
+          },
+          {
             "text": "marathon",
             "value": "marathon"
+          },
+          {
+            "text": "mesos-master",
+            "value": "mesos-master"
           },
           {
             "text": "mesos-slave",
@@ -371,6 +379,30 @@
         "refresh": true,
         "refresh_on_load": false,
         "type": "query"
+      },
+      {
+        "type": "query",
+        "datasource": null,
+        "refresh_on_load": false,
+        "name": "task",
+        "options": [
+          {
+            "text": "All",
+            "value": "*"
+          },
+          {
+            "text": "default",
+            "value": "default"
+          }
+        ],
+        "includeAll": true,
+        "allFormat": "wildcard",
+        "refresh": true,
+        "query": "collectd.*.docker_stats.$app.*",
+        "current": {
+          "text": "All",
+          "value": "*"
+        }
       }
     ]
   },
@@ -378,5 +410,5 @@
     "list": []
   },
   "schemaVersion": 6,
-  "version": 14
+  "version": 17
 }
