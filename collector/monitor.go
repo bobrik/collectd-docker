@@ -7,7 +7,7 @@ import (
 	"github.com/fsouza/go-dockerclient"
 )
 
-// ErrNoNeddToMonitor is used to skip containers
+// ErrNoNeedToMonitor is used to skip containers
 // that shouldn't be monitored by collectd
 var ErrNoNeedToMonitor = errors.New("container is not supposed to be monitored")
 

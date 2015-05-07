@@ -25,7 +25,6 @@ func NewCollectdWriter(host string, writer io.Writer) CollectdWriter {
 }
 
 func (w CollectdWriter) Write(s Stats) error {
-
 	return w.writeInts(s)
 }
 
