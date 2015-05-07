@@ -29,7 +29,7 @@ func NewCollector(client *docker.Client, w CollectdWriter, interval int) *Collec
 		}
 	}()
 
-	return Collector{
+	return &Collector{
 		client:     client,
 		ch:         ch,
 		mutex:      sync.Mutex{},
