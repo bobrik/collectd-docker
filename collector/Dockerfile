@@ -1,17 +1,22 @@
-FROM alpine:3.1
+FROM debian:jessie
 
-RUN apk --update add collectd py-pip && \
+RUN echo "APT::Install-Recommends false;" >> /etc/apt/apt.conf.d/recommends.conf && \
+    echo "APT::AutoRemove::RecommendsImportant false;" >> /etc/apt/apt.conf.d/recommends.conf && \
+    echo "APT::AutoRemove::SuggestsImportant false;" >> /etc/apt/apt.conf.d/recommends.conf && \
+    apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y collectd python-pip ca-certificates && \
     pip install envtpl
 
 COPY ./docker/collectd.conf.tpl /etc/collectd/collectd.conf.tpl
-
 COPY ./docker/run.sh /run.sh
 
 COPY . /go/src/github.com/bobrik/collectd-docker/collector
 
-RUN apk --update add go git && \
+RUN apt-get install -y golang-go git && \
     GOPATH=/go go get github.com/bobrik/collectd-docker/collector/... && \
-    apk del go git && \
+    apt-get remove -y golang-go git && \
+    apt-get autoremove -y && \
     mv /go/bin/collector /collector && \
     rm -rf /go && \
     chmod 6755 /collector
