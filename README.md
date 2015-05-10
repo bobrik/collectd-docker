@@ -13,6 +13,13 @@ is optional and only useful when you can run several instances of
 the same application on the same host. With task name you could
 see metrics of individual containers.
 
+Alternatively, you could tell this plugin where task id is located
+by setting `collectd_docker_task_label` label pointing to
+the other label name or `COLLECTD_DOCKER_TASK_ENV` env var pointing to
+the other env variable. For example, mesos sets `MESOS_TASK_ID`
+and by setting `COLLECTD_DOCKER_TASK_ENV` to `MESOS_TASK_ID` you
+would get task id from mesos.
+
 Containers can be added and removed on the fly, no need to restart collectd.
 
 ## Reported metrics
@@ -24,7 +31,6 @@ collectd.<host>.docker_stats.<app>.<task>.<type>.<metric>
 ```
 
 Gauges:
-
 
 * CPU
     * `cpu.user`
@@ -123,8 +129,6 @@ docker run -d -v /var/run/docker.sock:/var/run/docker.sock \
 
 ### Environment variables
 
-* `COLLECTD_DOCKER_APP` - graphite-friendly application name.
-* `COLLECTD_DOCKER_TASK` - graphite-friendly task name, defaults to `default`.
 * `COLLECTD_HOST` - host to use in metric name.
 * `COLLECTD_INTERVAL` - metric update interval in seconds, defaults to `10`.
 * `GRAPHITE_HOST` - host where carbon is listening for data.

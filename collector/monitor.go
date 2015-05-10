@@ -9,9 +9,11 @@ import (
 
 const appLabel = "collectd_docker_app"
 const taskLabel = "collectd_docker_task"
+const taskLocationLabel = "collectd_docker_task_label"
 
 const appEnvPrefix = "COLLECTD_DOCKER_APP="
-const taskEvnPrefix = "COLLECTD_DOCKER_TASK="
+const taskEnvPrefix = "COLLECTD_DOCKER_TASK="
+const taskEnvLocationPrefix = "COLLECTD_DOCKER_TASK_ENV="
 
 const defaultTask = "default"
 
@@ -19,9 +21,16 @@ const defaultTask = "default"
 // that shouldn't be monitored by collectd
 var ErrNoNeedToMonitor = errors.New("container is not supposed to be monitored")
 
+// MonitorDockerClient represents restricted interface for docker client
+// that is used in monitor, docker.Client is a subset of this interface
+type MonitorDockerClient interface {
+	InspectContainer(id string) (*docker.Container, error)
+	Stats(opts docker.StatsOptions) error
+}
+
 // Monitor is responsible for monitoring of a single container (task)
 type Monitor struct {
-	client   *docker.Client
+	client   MonitorDockerClient
 	id       string
 	app      string
 	task     string
@@ -30,18 +39,18 @@ type Monitor struct {
 
 // NewMonitor creates new monitor with specified docker client,
 // container id and stat updating interval
-func NewMonitor(c *docker.Client, id string, interval int) (*Monitor, error) {
+func NewMonitor(c MonitorDockerClient, id string, interval int) (*Monitor, error) {
 	container, err := c.InspectContainer(id)
 	if err != nil {
 		return nil, err
 	}
 
-	app := extractApp(container)
+	app := strings.Replace(extractApp(container), ".", "_", -1)
 	if app == "" {
 		return nil, ErrNoNeedToMonitor
 	}
 
-	task := extractTask(container)
+	task := strings.Replace(extractTask(container), ".", "_", -1)
 
 	return &Monitor{
 		client:   c,
@@ -84,7 +93,12 @@ func extractApp(c *docker.Container) string {
 }
 
 func extractTask(c *docker.Container) string {
-	return extractMetadata(c, taskLabel, taskEvnPrefix, defaultTask)
+	location := extractMetadata(c, taskLocationLabel, taskEnvLocationPrefix, "")
+	if location != "" {
+		return extractMetadata(c, location, location+"=", defaultTask)
+	}
+
+	return extractMetadata(c, taskLabel, taskEnvPrefix, defaultTask)
 }
 
 func extractMetadata(c *docker.Container, label, envPrefix, missing string) string {
