@@ -22,7 +22,7 @@
           "datasource": null,
           "editable": true,
           "error": false,
-          "fill": 1,
+          "fill": 0,
           "grid": {
             "leftLogBase": 1,
             "leftMax": null,
@@ -38,17 +38,19 @@
           "id": 3,
           "legend": {
             "alignAsTable": true,
-            "avg": false,
+            "avg": true,
             "current": true,
             "hideEmpty": true,
-            "max": false,
+            "max": true,
             "min": false,
             "show": true,
+            "sort": "current",
+            "sortDesc": true,
             "total": false,
             "values": true
           },
           "lines": true,
-          "linewidth": 2,
+          "linewidth": 1,
           "links": [],
           "nullPointMode": "null",
           "percentage": false,
@@ -62,14 +64,14 @@
           "targets": [
             {
               "hide": false,
-              "target": "aliasByNode(scaleToSeconds(derivative(collectd.*.docker_stats.$app.$task.gauge.cpu.total), 1), 3, 4, 1)"
+              "target": "aliasByNode(scaleToSeconds(nonNegativeDerivative(collectd.$host.docker_stats.$app.$task.gauge.cpu.total), 1), 3, 4, 1)"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
           "title": "CPU usage per second",
           "tooltip": {
-            "shared": true,
+            "shared": false,
             "value_type": "cumulative"
           },
           "type": "graph",
@@ -88,7 +90,7 @@
           "datasource": null,
           "editable": true,
           "error": false,
-          "fill": 1,
+          "fill": 0,
           "grid": {
             "leftLogBase": 1,
             "leftMax": null,
@@ -104,17 +106,19 @@
           "id": 1,
           "legend": {
             "alignAsTable": true,
-            "avg": false,
+            "avg": true,
             "current": true,
             "hideEmpty": true,
-            "max": false,
+            "max": true,
             "min": false,
             "show": true,
+            "sort": "current",
+            "sortDesc": true,
             "total": false,
             "values": true
           },
           "lines": true,
-          "linewidth": 2,
+          "linewidth": 1,
           "links": [],
           "nullPointMode": "null",
           "percentage": false,
@@ -124,7 +128,8 @@
           "seriesOverrides": [
             {
               "alias": "limit",
-              "linewidth": 3
+              "fill": 1,
+              "linewidth": 2
             }
           ],
           "span": 6,
@@ -133,18 +138,18 @@
           "targets": [
             {
               "hide": false,
-              "target": "alias(averageSeries(collectd.*.docker_stats.$app.$task.gauge.memory.limit), 'limit')"
+              "target": "alias(averageSeries(collectd.$host.docker_stats.$app.$task.gauge.memory.limit), 'limit')"
             },
             {
               "hide": false,
-              "target": "aliasByNode(collectd.*.docker_stats.$app.$task.gauge.memory.usage, 3, 4, 1)"
+              "target": "aliasByNode(collectd.$host.docker_stats.$app.$task.gauge.memory.usage, 3, 4, 1)"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
           "title": "Memory usage",
           "tooltip": {
-            "shared": true,
+            "shared": false,
             "value_type": "cumulative"
           },
           "type": "graph",
@@ -169,7 +174,7 @@
           "datasource": null,
           "editable": true,
           "error": false,
-          "fill": 1,
+          "fill": 0,
           "grid": {
             "leftLogBase": 1,
             "leftMax": null,
@@ -186,17 +191,19 @@
           "leftYAxisLabel": "",
           "legend": {
             "alignAsTable": true,
-            "avg": false,
+            "avg": true,
             "current": true,
             "hideEmpty": true,
-            "max": false,
+            "max": true,
             "min": false,
             "show": true,
+            "sort": "current",
+            "sortDesc": true,
             "total": false,
             "values": true
           },
           "lines": true,
-          "linewidth": 2,
+          "linewidth": 1,
           "links": [],
           "nullPointMode": "null",
           "percentage": false,
@@ -211,17 +218,17 @@
           "steppedLine": false,
           "targets": [
             {
-              "target": "aliasByNode(scaleToSeconds(derivative(collectd.*.docker_stats.$app.$task.gauge.net.tx_bytes), 1), 3, 4, 1, 7)"
+              "target": "aliasByNode(scaleToSeconds(nonNegativeDerivative(collectd.$host.docker_stats.$app.$task.gauge.net.tx_bytes), 1), 3, 4, 1, 7)"
             },
             {
-              "target": "aliasByNode(scaleToSeconds(derivative(collectd.*.docker_stats.$app.$task.gauge.net.rx_bytes), 1), 3, 4, 1, 7)"
+              "target": "aliasByNode(scaleToSeconds(nonNegativeDerivative(collectd.$host.docker_stats.$app.$task.gauge.net.rx_bytes), 1), 3, 4, 1, 7)"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
           "title": "Network bytes per second",
           "tooltip": {
-            "shared": true,
+            "shared": false,
             "value_type": "cumulative"
           },
           "type": "graph",
@@ -238,7 +245,7 @@
           "datasource": null,
           "editable": true,
           "error": false,
-          "fill": 1,
+          "fill": 0,
           "grid": {
             "leftLogBase": 1,
             "leftMax": null,
@@ -255,17 +262,19 @@
           "leftYAxisLabel": "",
           "legend": {
             "alignAsTable": true,
-            "avg": false,
+            "avg": true,
             "current": true,
             "hideEmpty": true,
-            "max": false,
+            "max": true,
             "min": false,
             "show": true,
+            "sort": "current",
+            "sortDesc": true,
             "total": false,
             "values": true
           },
           "lines": true,
-          "linewidth": 2,
+          "linewidth": 1,
           "links": [],
           "nullPointMode": "null",
           "percentage": false,
@@ -280,17 +289,17 @@
           "steppedLine": false,
           "targets": [
             {
-              "target": "aliasByNode(scaleToSeconds(derivative(collectd.*.docker_stats.$app.$task.gauge.net.tx_packets), 1), 3, 4, 1, 7)"
+              "target": "aliasByNode(scaleToSeconds(nonNegativeDerivative(collectd.$host.docker_stats.$app.$task.gauge.net.tx_packets), 1), 3, 4, 1, 7)"
             },
             {
-              "target": "aliasByNode(scaleToSeconds(derivative(collectd.*.docker_stats.$app.$task.gauge.net.rx_packets), 1), 3, 4, 1, 7)"
+              "target": "aliasByNode(scaleToSeconds(nonNegativeDerivative(collectd.$host.docker_stats.$app.$task.gauge.net.rx_packets), 1), 3, 4, 1, 7)"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
           "title": "Network packets per second",
           "tooltip": {
-            "shared": true,
+            "shared": false,
             "value_type": "cumulative"
           },
           "type": "graph",
@@ -339,25 +348,45 @@
     }
   ],
   "time": {
-    "from": "now-5m",
+    "from": "now-1h",
     "to": "now"
   },
   "templating": {
     "list": [
       {
+        "allFormat": "wildcard",
+        "current": {
+          "text": "All",
+          "value": "*"
+        },
+        "datasource": null,
+        "includeAll": true,
+        "name": "host",
+        "options": [
+          {
+            "text": "All",
+            "value": "*"
+          },
+          {
+            "text": "callisto",
+            "value": "callisto"
+          }
+        ],
+        "query": "collectd.*",
+        "refresh": true,
+        "refresh_on_load": false,
+        "type": "query"
+      },
+      {
         "allFormat": "glob",
         "current": {
-          "text": "hey",
-          "value": "hey"
+          "text": "zookeeper",
+          "value": "zookeeper"
         },
         "datasource": null,
         "includeAll": false,
         "name": "app",
         "options": [
-          {
-            "text": "hey",
-            "value": "hey"
-          },
           {
             "text": "marathon",
             "value": "marathon"
@@ -375,15 +404,19 @@
             "value": "zookeeper"
           }
         ],
-        "query": "collectd.*.docker_stats.*",
+        "query": "collectd.$host.docker_stats.*",
         "refresh": true,
         "refresh_on_load": false,
         "type": "query"
       },
       {
-        "type": "query",
+        "allFormat": "wildcard",
+        "current": {
+          "text": "All",
+          "value": "*"
+        },
         "datasource": null,
-        "refresh_on_load": false,
+        "includeAll": true,
         "name": "task",
         "options": [
           {
@@ -395,14 +428,10 @@
             "value": "default"
           }
         ],
-        "includeAll": true,
-        "allFormat": "wildcard",
+        "query": "collectd.$host.docker_stats.$app.*",
         "refresh": true,
-        "query": "collectd.*.docker_stats.$app.*",
-        "current": {
-          "text": "All",
-          "value": "*"
-        }
+        "refresh_on_load": false,
+        "type": "query"
       }
     ]
   },
@@ -410,5 +439,5 @@
     "list": []
   },
   "schemaVersion": 6,
-  "version": 17
+  "version": 24
 }

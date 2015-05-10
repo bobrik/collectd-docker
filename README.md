@@ -72,43 +72,43 @@ Grafana 2 [dashboard](grafana2.json) is included.
 * CPU usage per second
 
 ```
-aliasByNode(scaleToSeconds(derivative(collectd.*.docker_stats.$app.$task.gauge.cpu.total), 1), 3, 4, 1)
+aliasByNode(scaleToSeconds(nonNegativeDerivative(collectd.$host.docker_stats.$app.$task.gauge.cpu.total), 1), 3, 4, 1)
 ```
 
 * Memory limit
 
 ```
-alias(averageSeries(collectd.*.docker_stats.$app.$task.gauge.memory.limit), 'limit')
+alias(averageSeries(collectd.$host.docker_stats.$app.$task.gauge.memory.limit), 'limit')
 ```
 
 * Memory usage
 
 ```
-aliasByNode(collectd.*.docker_stats.$app.$task.gauge.memory.usage, 3, 4, 1)
+aliasByNode(collectd.$host.docker_stats.$app.$task.gauge.memory.usage, 3, 4, 1)
 ```
 
 * Network bytes per second tx
 
 ```
-aliasByNode(scaleToSeconds(derivative(collectd.*.docker_stats.$app.$task.gauge.net.tx_bytes), 1), 3, 4, 1, 7)
+aliasByNode(scaleToSeconds(nonNegativeDerivative(collectd.$host.docker_stats.$app.$task.gauge.net.tx_bytes), 1), 3, 4, 1, 7)
 ```
 
 * Network bytes per second rx
 
 ```
-aliasByNode(scaleToSeconds(derivative(collectd.*.docker_stats.$app.$task.gauge.net.rx_bytes), 1), 3, 4, 1, 7)
+aliasByNode(scaleToSeconds(nonNegativeDerivative(collectd.$host.docker_stats.$app.$task.gauge.net.rx_bytes), 1), 3, 4, 1, 7)
 ```
 
 * Network packets per second tx
 
 ```
-aliasByNode(scaleToSeconds(derivative(collectd.*.docker_stats.$app.$task.gauge.net.tx_packets), 1), 3, 4, 1, 7)
+aliasByNode(scaleToSeconds(nonNegativeDerivative(collectd.$host.docker_stats.$app.$task.gauge.net.tx_packets), 1), 3, 4, 1, 7)
 ```
 
 * Network packets per second rx
 
 ```
-aliasByNode(scaleToSeconds(derivative(collectd.*.docker_stats.$app.$task.gauge.net.rx_packets), 1), 3, 4, 1, 7)
+aliasByNode(scaleToSeconds(nonNegativeDerivative(collectd.$host.docker_stats.$app.$task.gauge.net.rx_packets), 1), 3, 4, 1, 7)
 ```
 
 ## Running
