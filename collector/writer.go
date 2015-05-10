@@ -29,7 +29,7 @@ func (w CollectdWriter) Write(s Stats) error {
 }
 
 func (w CollectdWriter) writeInts(s Stats) error {
-	metrics := map[string]int64{
+	metrics := map[string]uint64{
 		"cpu.user":   s.Stats.CPUStats.CPUUsage.UsageInUsermode,
 		"cpu.system": s.Stats.CPUStats.CPUUsage.UsageInKernelmode,
 		"cpu.total":  s.Stats.CPUStats.CPUUsage.TotalUsage,
@@ -74,7 +74,7 @@ func (w CollectdWriter) writeInts(s Stats) error {
 	return nil
 }
 
-func (w CollectdWriter) writeInt(s Stats, k string, t, v int64) error {
+func (w CollectdWriter) writeInt(s Stats, k string, t int64, v uint64) error {
 	msg := fmt.Sprintf(collectdIntGaugeTemplate, w.host, s.App, s.Task, k, t, v)
 	_, err := w.writer.Write([]byte(msg))
 	return err
