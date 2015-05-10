@@ -14,6 +14,7 @@ const taskLocationLabel = "collectd_docker_task_label"
 const appEnvPrefix = "COLLECTD_DOCKER_APP="
 const taskEnvPrefix = "COLLECTD_DOCKER_TASK="
 const taskEnvLocationPrefix = "COLLECTD_DOCKER_TASK_ENV="
+const taskEnvLocationTrimPrefix = "COLLECTD_DOCKER_TASK_ENV_TRIM_PREFIX="
 
 const defaultTask = "default"
 
@@ -45,12 +46,12 @@ func NewMonitor(c MonitorDockerClient, id string, interval int) (*Monitor, error
 		return nil, err
 	}
 
-	app := strings.Replace(extractApp(container), ".", "_", -1)
+	app := sanitizeForGraphite(extractApp(container))
 	if app == "" {
 		return nil, ErrNoNeedToMonitor
 	}
 
-	task := strings.Replace(extractTask(container), ".", "_", -1)
+	task := sanitizeForGraphite(extractTask(container))
 
 	return &Monitor{
 		client:   c,
@@ -93,12 +94,21 @@ func extractApp(c *docker.Container) string {
 }
 
 func extractTask(c *docker.Container) string {
+	task := defaultTask
+
 	location := extractMetadata(c, taskLocationLabel, taskEnvLocationPrefix, "")
 	if location != "" {
-		return extractMetadata(c, location, location+"=", defaultTask)
+		task = extractMetadata(c, location, location+"=", defaultTask)
+	} else {
+		task = extractMetadata(c, taskLabel, taskEnvPrefix, defaultTask)
 	}
 
-	return extractMetadata(c, taskLabel, taskEnvPrefix, defaultTask)
+	prefix := extractEnv(c, taskEnvLocationTrimPrefix)
+	if prefix != "" {
+		return strings.TrimPrefix(task, prefix)
+	}
+
+	return task
 }
 
 func extractMetadata(c *docker.Container, label, envPrefix, missing string) string {
@@ -106,11 +116,24 @@ func extractMetadata(c *docker.Container, label, envPrefix, missing string) stri
 		return app
 	}
 
+	env := extractEnv(c, envPrefix)
+	if env != "" {
+		return env
+	}
+
+	return missing
+}
+
+func extractEnv(c *docker.Container, envPrefix string) string {
 	for _, e := range c.Config.Env {
 		if strings.HasPrefix(e, envPrefix) {
 			return strings.TrimPrefix(e, envPrefix)
 		}
 	}
 
-	return missing
+	return ""
+}
+
+func sanitizeForGraphite(s string) string {
+	return strings.Replace(s, ".", "_", -1)
 }
