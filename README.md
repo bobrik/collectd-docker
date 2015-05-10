@@ -18,7 +18,9 @@ by setting `collectd_docker_task_label` label pointing to
 the other label name or `COLLECTD_DOCKER_TASK_ENV` env var pointing to
 the other env variable. For example, mesos sets `MESOS_TASK_ID`
 and by setting `COLLECTD_DOCKER_TASK_ENV` to `MESOS_TASK_ID` you
-would get task id from mesos.
+would get task id from mesos. In this case it is also useful
+to set `COLLECTD_DOCKER_TASK_ENV_TRIM_PREFIX` to trim prefix since
+string `<app>.<task>` is limited by 63 characters.
 
 Containers can be added and removed on the fly, no need to restart collectd.
 

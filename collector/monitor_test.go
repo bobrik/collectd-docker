@@ -129,6 +129,18 @@ func TestLabelExtraction(t *testing.T) {
 			app:  "my_app",
 			task: "topface_prod-test_app_c80a053f-f66f-11e4-a977-56847afe9799",
 		},
+		&fakeMonitorDockerClient{
+			labels: map[string]string{},
+			env: []string{
+				appEnvPrefix + "my.app",
+				taskEnvLocationPrefix + "MESOS_TASK_ID",
+				taskEnvLocationTrimPrefix + "topface_prod-test_app.",
+				"MESOS_TASK_ID=topface_prod-test_app.c80a053f-f66f-11e4-a977-56847afe9799",
+			},
+		}: {
+			app:  "my_app",
+			task: "c80a053f-f66f-11e4-a977-56847afe9799",
+		},
 	}
 
 	for c, e := range tests {
