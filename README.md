@@ -42,10 +42,10 @@ Gauges:
 * Memory overview
     * `memory.limit`
     * `memory.max`
-	* `memory.usage`
+    * `memory.usage`
 
 * Memory breakdown
-	* `memory.active_anon`
+    * `memory.active_anon`
     * `memory.active_file`
     * `memory.cache`
     * `memory.inactive_anon`
@@ -73,7 +73,7 @@ Gauges:
 
 Grafana 2 [dashboard](grafana2.json) is included.
 
-![screenshot](screenshot.png)
+![screenshot](https://github.com/bobrik/collectd-docker/raw/master/screenshot.png)
 
 #### Graphite metrics extracted from the dashboard
 
