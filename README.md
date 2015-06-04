@@ -131,7 +131,7 @@ docker run -d -v /var/run/docker.sock:/var/run/docker.sock \
 
 ### Environment variables
 
-* `COLLECTD_HOST` - host to use in metric name.
+* `COLLECTD_HOST` - host to use in metric name, defaults to `MESOS_HOST` if defined.
 * `COLLECTD_INTERVAL` - metric update interval in seconds, defaults to `10`.
 * `GRAPHITE_HOST` - host where carbon is listening for data.
 * `GRAPHITE_PORT` - port where carbon is listening for data, `2003` by default.
