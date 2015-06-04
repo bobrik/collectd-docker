@@ -1,4 +1,4 @@
-Hostname "{{ COLLECTD_HOST | default(MESOS_HOST) }}"
+Hostname "{{ COLLECTD_HOST }}"
 
 FQDNLookup false
 Interval {{ COLLECTD_INTERVAL | default(10) }}

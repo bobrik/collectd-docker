@@ -6,7 +6,12 @@ RUN echo "APT::Install-Recommends false;" >> /etc/apt/apt.conf.d/recommends.conf
     apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y collectd python-pip ca-certificates && \
-    pip install envtpl
+    pip install envtpl && \
+    apt-get install -y curl && \
+    curl -sL https://github.com/tianon/gosu/releases/download/1.4/gosu-amd64 > /usr/bin/gosu && \
+    chmod +x /usr/bin/gosu && \
+    apt-get remove -y curl && \
+    apt-get autoremove -y
 
 COPY ./docker/collectd.conf.tpl /etc/collectd/collectd.conf.tpl
 COPY ./docker/run.sh /run.sh
