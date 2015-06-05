@@ -13,4 +13,4 @@ if [ ! -e "/.initialized" ]; then
     envtpl /etc/collectd/collectd.conf.tpl
 fi
 
-gosu nobody collectd -f > /dev/null
+exec gosu nobody collectd -f > /dev/null
