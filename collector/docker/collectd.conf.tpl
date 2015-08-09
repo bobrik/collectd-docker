@@ -21,5 +21,5 @@ LoadPlugin write_graphite
 
 LoadPlugin exec
 <Plugin exec>
-  Exec "nobody" "/collector" "-endpoint" "unix:///var/run/docker.sock" "-host" {{ COLLECTD_HOST }} "-interval" "{{ COLLECTD_INTERVAL | default(10) }}"
+  Exec "nobody" "/collector" "-endpoint" "unix:///var/run/docker.sock" "-host" "{{ COLLECTD_HOST }}" "-interval" "{{ COLLECTD_INTERVAL | default(10) }}"
 </Plugin>
