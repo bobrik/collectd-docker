@@ -84,8 +84,9 @@ func (m *Monitor) handle(ch chan<- Stats) error {
 	}()
 
 	return m.client.Stats(docker.StatsOptions{
-		ID:    m.id,
-		Stats: in,
+		ID:     m.id,
+		Stats:  in,
+		Stream: true,
 	})
 }
 
