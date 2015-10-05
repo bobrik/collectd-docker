@@ -8,10 +8,13 @@ import (
 )
 
 const appLabel = "collectd_docker_app"
+const appLocationLabel = "collectd_docker_app_label"
 const taskLabel = "collectd_docker_task"
 const taskLocationLabel = "collectd_docker_task_label"
 
 const appEnvPrefix = "COLLECTD_DOCKER_APP="
+const appEnvLocationPrefix = "COLLECTD_DOCKER_APP_ENV="
+const appEnvLocationTrimPrefix = "COLLECTD_DOCKER_APP_ENV_TRIM_PREFIX="
 const taskEnvPrefix = "COLLECTD_DOCKER_TASK="
 const taskEnvLocationPrefix = "COLLECTD_DOCKER_TASK_ENV="
 const taskEnvLocationTrimPrefix = "COLLECTD_DOCKER_TASK_ENV_TRIM_PREFIX="
@@ -91,7 +94,21 @@ func (m *Monitor) handle(ch chan<- Stats) error {
 }
 
 func extractApp(c *docker.Container) string {
-	return extractMetadata(c, appLabel, appEnvPrefix, "")
+	app := ""
+
+	location := extractMetadata(c, appLocationLabel, appEnvLocationPrefix, "")
+	if location != "" {
+		app = extractMetadata(c, location, location+"=", "")
+	} else {
+		app = extractMetadata(c, appLabel, appEnvPrefix, "")
+	}
+
+	prefix := extractEnv(c, appEnvLocationTrimPrefix)
+	if prefix != "" {
+		return strings.TrimPrefix(app, prefix)
+	}
+
+	return app
 }
 
 func extractTask(c *docker.Container) string {
