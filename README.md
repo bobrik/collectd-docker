@@ -12,7 +12,9 @@ You can also set the application name by setting `COLLECTD_DOCKER_APP_ENV`
 to point to the environment variable to use for the app name.
 For example, marathon sets `MARATHON_APP_ID` and by setting
 `COLLECTD_DOCKER_APP_ENV` to `MARATHON_APP_ID` you would get the
-marathon app id.
+marathon app id. In this case it is also useful
+to set `COLLECTD_DOCKER_APP_ENV_TRIM_PREFIX` to trim prefix since
+string `<app>.<task>` is limited by 63 characters.
 
 To set a task name,you should set label `collectd_docker_task`
 or env variable `COLLECTD_DOCKER_TASK` to the task name. Task name
