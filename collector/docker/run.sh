@@ -9,8 +9,8 @@ if [ -n "${MESOS_HOST}" ]; then
 fi
 
 if [ ! -e "/.initialized" ]; then
-    touch "/.initialized"
     envtpl /etc/collectd/collectd.conf.tpl
+    touch "/.initialized"
 fi
 
 exec gosu nobody collectd -f > /dev/null
