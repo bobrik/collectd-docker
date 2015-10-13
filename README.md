@@ -135,7 +135,7 @@ Minimal command:
 ```
 docker run -d -v /var/run/docker.sock:/var/run/docker.sock \
     -e GRAPHITE_HOST=<graphite host> -e COLLECTD_HOST=<colllectd host> \
-    -e COLLECTD_DOCKER_APP=<app name> bobrik/collectd-docker
+    bobrik/collectd-docker
 ```
 
 ### Environment variables
