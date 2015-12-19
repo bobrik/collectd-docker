@@ -51,15 +51,18 @@ func (w CollectdWriter) writeInts(s Stats) error {
 		"memory.rss_huge":      s.Stats.MemoryStats.Stats.TotalRssHuge,
 		"memory.unevictable":   s.Stats.MemoryStats.Stats.TotalUnevictable,
 		"memory.writeback":     s.Stats.MemoryStats.Stats.TotalWriteback,
+	}
 
-		"net.rx_bytes":   s.Stats.Network.RxBytes,
-		"net.rx_dropped": s.Stats.Network.RxDropped,
-		"net.rx_errors":  s.Stats.Network.RxErrors,
-		"net.rx_packets": s.Stats.Network.RxPackets,
-		"net.tx_bytes":   s.Stats.Network.TxBytes,
-		"net.tx_dropped": s.Stats.Network.TxDropped,
-		"net.tx_errors":  s.Stats.Network.TxErrors,
-		"net.tx_packets": s.Stats.Network.TxPackets,
+	for _, network := range s.Stats.Networks {
+		metrics["net.rx_bytes"] += network.RxBytes
+		metrics["net.rx_dropped"] += network.RxDropped
+		metrics["net.rx_errors"] += network.RxErrors
+		metrics["net.rx_packets"] += network.RxPackets
+
+		metrics["net.tx_bytes"] += network.TxBytes
+		metrics["net.tx_dropped"] += network.TxDropped
+		metrics["net.tx_errors"] += network.TxErrors
+		metrics["net.tx_packets"] += network.TxPackets
 	}
 
 	t := s.Stats.Read.Unix()
