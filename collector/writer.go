@@ -28,11 +28,23 @@ func (w CollectdWriter) Write(s Stats) error {
 	return w.writeInts(s)
 }
 
+func cpuPercentage(s Stats) uint64 {
+	cpuPercent := 0.0
+	cpuDelta := float64(s.Stats.CPUStats.CPUUsage.TotalUsage) - float64(s.Stats.PreCPUStats.CPUUsage.TotalUsage)
+	systemDelta := float64(s.Stats.CPUStats.SystemCPUUsage) - float64(s.Stats.PreCPUStats.SystemCPUUsage)
+	if systemDelta > 0.0 && cpuDelta > 0.0 {
+		cpuPercent = (cpuDelta / systemDelta) * float64(len(s.Stats.CPUStats.CPUUsage.PercpuUsage)) * 100.0
+	}
+
+	return uint64(cpuPercent)
+}
+
 func (w CollectdWriter) writeInts(s Stats) error {
 	metrics := map[string]uint64{
-		"cpu.user":   s.Stats.CPUStats.CPUUsage.UsageInUsermode,
-		"cpu.system": s.Stats.CPUStats.CPUUsage.UsageInKernelmode,
-		"cpu.total":  s.Stats.CPUStats.CPUUsage.TotalUsage,
+		"cpu.user":       s.Stats.CPUStats.CPUUsage.UsageInUsermode,
+		"cpu.system":     s.Stats.CPUStats.CPUUsage.UsageInKernelmode,
+		"cpu.total":      s.Stats.CPUStats.CPUUsage.TotalUsage,
+		"cpu.percentage": cpuPercentage(s),
 
 		"memory.limit": s.Stats.MemoryStats.Limit,
 		"memory.max":   s.Stats.MemoryStats.MaxUsage,
