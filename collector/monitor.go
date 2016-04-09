@@ -8,7 +8,7 @@ import (
 	"github.com/fsouza/go-dockerclient"
 )
 
-func Getenv(env string, defaultValue string) string {
+func getenv(env string, defaultValue string) string {
   var value = os.Getenv(env)
   if len(value) > 0 {
     return value
@@ -17,15 +17,15 @@ func Getenv(env string, defaultValue string) string {
   }
 }
 
-var appLabel = Getenv("KEY_APP_LABEL", "collectd_docker_app")
+var appLabel = getenv("APP_LABEL_KEY", "collectd_docker_app")
 var appLocationLabel = "collectd_docker_app_label"
-var taskLabel = Getenv("KEY_TASK_LABEL", "collectd_docker_task")
+var taskLabel = getenv("TASK_LABEL_KEY", "collectd_docker_task")
 var taskLocationLabel = "collectd_docker_task_label"
 
-var appEnvPrefix = Getenv("KEY_APP_ENV", "COLLECTD_DOCKER_APP") + "="
+var appEnvPrefix = getenv("APP_ENV_KEY", "COLLECTD_DOCKER_APP") + "="
 var appEnvLocationPrefix = "COLLECTD_DOCKER_APP_ENV="
 var appEnvLocationTrimPrefix = "COLLECTD_DOCKER_APP_ENV_TRIM_PREFIX="
-var taskEnvPrefix = Getenv("KEY_TASK_ENV", "COLLECTD_DOCKER_TASK") + "="
+var taskEnvPrefix = getenv("TASK_ENV_KEY", "COLLECTD_DOCKER_TASK") + "="
 var taskEnvLocationPrefix = "COLLECTD_DOCKER_TASK_ENV="
 var taskEnvLocationTrimPrefix = "COLLECTD_DOCKER_TASK_ENV_TRIM_PREFIX="
 
