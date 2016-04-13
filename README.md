@@ -13,7 +13,7 @@ This plugin treats containers as tasks that run as parts of apps.
 
 * Set the label `collectd_docker_app` directly on the container
 * Set `collectd_docker_app_label` on the container that points to which actual
-label to use. e.g.`collectd_app_label=app_id` will use `app_id` label on the
+label to use. e.g.`collectd_docker_app_label=app_id` will use `app_id` label on the
 container
 * Set environment variable `COLLECTD_DOCKER_APP` on the container
 * Set `COLLECTD_DOCKER_APP_ENV` on the container that points to which actual
@@ -30,7 +30,7 @@ when running the collectd container. For example, if you set `APP_ENV_KEY` to
 
 * Set the label `collectd_docker_task` directly on the container
 * Set `collectd_docker_task_label` on the container that points to which actual
-label to use. e.g.`collectd_app_label=task_id` will use `task_id` label on the
+label to use. e.g.`collectd_docker_task_label=task_id` will use `task_id` label on the
 container
 * Set environment variable `COLLECTD_DOCKER_TASK` on the container
 * Set `COLLECTD_DOCKER_TASK_ENV` on the container that points to which actual
