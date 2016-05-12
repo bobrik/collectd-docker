@@ -163,5 +163,8 @@ func extractEnv(c *docker.Container, envPrefix string) string {
 }
 
 func sanitizeForGraphite(s string) string {
-	return strings.Replace(s, ".", "_", -1)
+	r := strings.Replace(s, ".", "_", -1)
+
+  // strip leading / and santize any other / for mesos ids  
+  return strings.Replace(strings.TrimPrefix(r, "/"), "/", "_", -1)
 }

@@ -88,6 +88,18 @@ func TestLabelExtraction(t *testing.T) {
 			app:  "my_app",
 			task: "ho_ho_ho",
 		},
+		
+		// mesos style labels
+		&fakeMonitorDockerClient{
+			labels: map[string]string{
+				appLabel:  "/my/app",
+				taskLabel: "/my/ta/sk",
+			},
+			env: []string{},
+		}: {
+			app:  "my_app",
+			task: "my_ta_sk",
+		},		
 
 		// env
 		&fakeMonitorDockerClient{
