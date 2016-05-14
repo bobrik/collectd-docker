@@ -27,5 +27,5 @@ if [ -e /var/run/docker.sock ]; then
 fi
 useradd -g "${GROUP}" collectd-docker-collector
 
-exec reefer -t /etc/collectd/collectd.conf.tpl:/tmp/collectd.conf \
+exec reefer -t /etc/collectd/collectd.conf.tpl:/tmp/collectd.conf -E \
   collectd -f -C /tmp/collectd.conf "$@" > /dev/null
