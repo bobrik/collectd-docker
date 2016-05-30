@@ -97,6 +97,12 @@ Gauges:
     * `net.tx_errors`
     * `net.tx_packets`
 
+Percent:
+
+* CPU
+    * `cpu.percent`
+
+
 ## Grafana dashboard
 
 Grafana 2 [dashboard](grafana2.json) is included.
