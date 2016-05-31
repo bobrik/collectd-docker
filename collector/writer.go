@@ -25,7 +25,7 @@ func NewCollectdWriter(host string, writer io.Writer) CollectdWriter {
 	}
 }
 
-func (w *CollectdWriter) Write(s Stats) error {
+func (w CollectdWriter) Write(s Stats) error {
 	if err := w.writeInts(s); err != nil {
 		return err
 	}
