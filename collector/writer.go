@@ -14,7 +14,6 @@ type CollectdWriter struct {
 	host      string
 	writer    io.Writer
 	interval  int
-	lastStats Stats
 }
 
 // NewCollectdWriter creates new CollectdWriter
@@ -34,8 +33,6 @@ func (w *CollectdWriter) Write(s Stats) error {
 	if err := w.writeDerived(s); err != nil {
 		return err
 	}
-
-	w.lastStats = s
 
 	return nil
 }
@@ -90,7 +87,7 @@ func (w CollectdWriter) writeInts(s Stats) error {
 }
 
 func (w CollectdWriter) writeDerived(s Stats) error {
-	cpu := w.calculateCPUPercent(s, w.lastStats)
+	cpu := w.calculateCPUPercent(s)
 
 	t := s.Stats.Read.Unix()
 
@@ -111,17 +108,17 @@ func (w CollectdWriter) writeFloat(s Stats, k string, t int64, v float64) error 
 
 // calculate CPU Percentage, taken from docker stats client:
 // https://github.com/docker/docker/blob/master/api/client/stats_helpers.go#L199-L212
-func (w CollectdWriter) calculateCPUPercent(c, p Stats) float64 {
+func (w CollectdWriter) calculateCPUPercent(s Stats) float64 {
 	var (
 		cpuPercent = 0.0
 		// calculate the change for the cpu usage of the container in between readings
-		cpuDelta = float64(c.Stats.CPUStats.CPUUsage.TotalUsage) - float64(p.Stats.CPUStats.CPUUsage.TotalUsage)
+		cpuDelta = float64(s.Stats.CPUStats.CPUUsage.TotalUsage) - float64(s.PrevStats.CPUStats.CPUUsage.TotalUsage)
 		// calculate the change for the entire system between readings
-		systemDelta = float64(c.Stats.CPUStats.SystemCPUUsage) - float64(p.Stats.CPUStats.SystemCPUUsage)
+		systemDelta = float64(s.Stats.CPUStats.SystemCPUUsage) - float64(s.PrevStats.CPUStats.SystemCPUUsage)
 	)
 
 	if systemDelta > 0.0 && cpuDelta > 0.0 {
-		cpuPercent = (cpuDelta / systemDelta) * float64(len(c.Stats.CPUStats.CPUUsage.PercpuUsage)) * 100.0
+		cpuPercent = (cpuDelta / systemDelta) * float64(len(s.Stats.CPUStats.CPUUsage.PercpuUsage)) * 100.0
 	}
 
 	return cpuPercent

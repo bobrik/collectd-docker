@@ -49,6 +49,7 @@ type Monitor struct {
 	app      string
 	task     string
 	interval int
+	lastStats docker.Stats
 }
 
 // NewMonitor creates new monitor with specified docker client,
@@ -90,7 +91,10 @@ func (m *Monitor) handle(ch chan<- Stats) error {
 				App:   m.app,
 				Task:  m.task,
 				Stats: *s,
+				PrevStats: m.lastStats,
 			}
+
+			m.lastStats = *s
 
 			i++
 		}
