@@ -2,9 +2,11 @@ package collector
 
 import (
 	"fmt"
+	"github.com/fsouza/go-dockerclient"
 	"io"
 )
 
+const collectdFloatGaugeTemplate = "PUTVAL %s/docker-%s_%s/%s %d:%f\n"
 const collectdIntGaugeTemplate = "PUTVAL %s/docker-%s_%s/%s %d:%d\n"
 const collectdStringTemplate = "PUTVAL %s/docker-%s_%s/%s %d:%s\n"
 
@@ -30,12 +32,14 @@ func (w CollectdWriter) Write(s Stats) error {
 }
 
 func (w CollectdWriter) writeInts(s Stats) error {
+	totalPercent, userPercent, systemPercent := calculateCPUPercent(s.Stats.PreCPUStats, s.Stats.CPUStats)
+	cpu_metrics := map[string]float64{
+		"vcpu-user":   userPercent,
+		"vcpu-system": systemPercent,
+		"vcpu-total":  totalPercent,
+	}
 
-	metrics := map[string]uint64{
-		"cpu-user":   s.Stats.CPUStats.CPUUsage.UsageInUsermode,
-		"cpu-system": s.Stats.CPUStats.CPUUsage.UsageInKernelmode,
-		"cpu-total":  s.Stats.CPUStats.CPUUsage.TotalUsage,
-
+	memory_metrics := map[string]uint64{
 		"memory-limit": s.Stats.MemoryStats.Limit,
 		"memory-max":   s.Stats.MemoryStats.MaxUsage,
 		"memory-usage": s.Stats.MemoryStats.Usage,
@@ -66,7 +70,14 @@ func (w CollectdWriter) writeInts(s Stats) error {
 
 	t := s.Stats.Read.Unix()
 
-	for k, v := range metrics {
+	for k, v := range cpu_metrics {
+		err := w.writeFloat(s, k, t, v)
+		if err != nil {
+			return err
+		}
+	}
+
+	for k, v := range memory_metrics {
 		err := w.writeInt(s, k, t, v)
 		if err != nil {
 			return err
@@ -83,6 +94,12 @@ func (w CollectdWriter) writeInts(s Stats) error {
 	return nil
 }
 
+func (w CollectdWriter) writeFloat(s Stats, k string, t int64, v float64) error {
+	msg := fmt.Sprintf(collectdFloatGaugeTemplate, w.host, s.App, s.Task, k, t, v)
+	_, err := w.writer.Write([]byte(msg))
+	return err
+}
+
 func (w CollectdWriter) writeInt(s Stats, k string, t int64, v uint64) error {
 	msg := fmt.Sprintf(collectdIntGaugeTemplate, w.host, s.App, s.Task, k, t, v)
 	_, err := w.writer.Write([]byte(msg))
@@ -93,4 +110,30 @@ func (w CollectdWriter) writeString(s Stats, k string, t int64, v string) error 
 	msg := fmt.Sprintf(collectdStringTemplate, w.host, s.App, s.Task, k, t, v)
 	_, err := w.writer.Write([]byte(msg))
 	return err
+}
+
+func calculateCPUPercent(previous docker.CPUStats, current docker.CPUStats) (float64, float64, float64) {
+	var (
+		totalCpuPercent  = 0.0
+		totalCpuDelta    = float64(current.CPUUsage.TotalUsage) - float64(previous.CPUUsage.TotalUsage)
+		userCpuPercent   = 0.0
+		userCpuDelta     = float64(current.CPUUsage.UsageInUsermode) - float64(previous.CPUUsage.UsageInUsermode)
+		systemCpuPercent = 0.0
+		systemCpuDelta   = float64(current.CPUUsage.UsageInKernelmode) - float64(previous.CPUUsage.UsageInKernelmode)
+		systemDelta      = float64(current.SystemCPUUsage) - float64(previous.SystemCPUUsage)
+		totalCpus        = float64(len(current.CPUUsage.PercpuUsage))
+	)
+
+	if systemDelta > 0.0 {
+		if totalCpuDelta > 0.0 {
+			totalCpuPercent = (totalCpuDelta / systemDelta) * totalCpus * 100.0
+		}
+		if userCpuDelta > 0.0 {
+			userCpuPercent = (userCpuDelta / systemDelta) * totalCpus * 100.0
+		}
+		if systemCpuDelta > 0.0 {
+			systemCpuPercent = (systemCpuDelta / systemDelta) * totalCpus * 100.0
+		}
+	}
+	return totalCpuPercent, userCpuPercent, systemCpuPercent
 }
