@@ -7,4 +7,5 @@ type Stats struct {
 	App   string
 	Task  string
 	Stats docker.Stats
+	PrevStats docker.Stats
 }
