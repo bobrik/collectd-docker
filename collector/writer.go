@@ -6,13 +6,15 @@ import (
 )
 
 const collectdIntGaugeTemplate = "PUTVAL %s/docker_stats-%s.%s/gauge-%s %d:%d\n"
+const collectdFloatPercentageTemplate = "PUTVAL %s/docker_stats-%s.%s/percent-%s %d:%f\n"
 
 // CollectdWriter is responsible for writing data
 // to wrapped writer in collectd exec plugin format
 type CollectdWriter struct {
-	host     string
-	writer   io.Writer
-	interval int
+	host      string
+	writer    io.Writer
+	interval  int
+	lastStats Stats
 }
 
 // NewCollectdWriter creates new CollectdWriter
@@ -24,8 +26,18 @@ func NewCollectdWriter(host string, writer io.Writer) CollectdWriter {
 	}
 }
 
-func (w CollectdWriter) Write(s Stats) error {
-	return w.writeInts(s)
+func (w *CollectdWriter) Write(s Stats) error {
+	if err := w.writeInts(s); err != nil {
+		return err
+	}
+
+	if err := w.writeDerived(s); err != nil {
+		return err
+	}
+
+	w.lastStats = s
+
+	return nil
 }
 
 func (w CollectdWriter) writeInts(s Stats) error {
@@ -77,8 +89,40 @@ func (w CollectdWriter) writeInts(s Stats) error {
 	return nil
 }
 
+func (w CollectdWriter) writeDerived(s Stats) error {
+	cpu := w.calculateCPUPercent(s, w.lastStats)
+
+	t := s.Stats.Read.Unix()
+
+	return w.writeFloat(s, "cpu.percentage", t, cpu)
+}
+
 func (w CollectdWriter) writeInt(s Stats, k string, t int64, v uint64) error {
 	msg := fmt.Sprintf(collectdIntGaugeTemplate, w.host, s.App, s.Task, k, t, v)
 	_, err := w.writer.Write([]byte(msg))
 	return err
+}
+
+func (w CollectdWriter) writeFloat(s Stats, k string, t int64, v float64) error {
+	msg := fmt.Sprintf(collectdFloatPercentageTemplate, w.host, s.App, s.Task, k, t, v)
+	_, err := w.writer.Write([]byte(msg))
+	return err
+}
+
+// calculate CPU Percentage, taken from docker stats client:
+// https://github.com/docker/docker/blob/master/api/client/stats_helpers.go#L199-L212
+func (w CollectdWriter) calculateCPUPercent(c, p Stats) float64 {
+	var (
+		cpuPercent = 0.0
+		// calculate the change for the cpu usage of the container in between readings
+		cpuDelta = float64(c.Stats.CPUStats.CPUUsage.TotalUsage) - float64(p.Stats.CPUStats.CPUUsage.TotalUsage)
+		// calculate the change for the entire system between readings
+		systemDelta = float64(c.Stats.CPUStats.SystemCPUUsage) - float64(p.Stats.CPUStats.SystemCPUUsage)
+	)
+
+	if systemDelta > 0.0 && cpuDelta > 0.0 {
+		cpuPercent = (cpuDelta / systemDelta) * float64(len(c.Stats.CPUStats.CPUUsage.PercpuUsage)) * 100.0
+	}
+
+	return cpuPercent
 }
